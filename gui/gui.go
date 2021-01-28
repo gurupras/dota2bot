@@ -8,7 +8,9 @@ import (
 	"github.com/gurupras/dota2bot"
 )
 
-type Update struct {
+type UnitUpdate struct {
+	Name   string `json:"name"`
+	IsHero bool   `json:"isHero"`
 	Point  `json:"point"`
 	Radius float64 `json:"radius"`
 	Red    int     `json:"red"`
@@ -25,7 +27,7 @@ type BaseGUI struct {
 	sync.Mutex
 	*dota2bot.GameInfo
 	Bounds     image.Rectangle
-	LastUpdate []*Update
+	LastUpdate []*UnitUpdate
 }
 
 type GUI interface {
@@ -59,7 +61,7 @@ func (b *BaseGUI) GameCoordinatesToImageCoordinates(location dota2bot.Location) 
 }
 
 func (b *BaseGUI) Update(units []dota2bot.Unit) {
-	unitUpdates := make([]*Update, 0)
+	unitUpdates := make([]*UnitUpdate, 0)
 	for _, unit := range units {
 		point := b.GameCoordinatesToImageCoordinates(unit.Location)
 		var (
@@ -79,12 +81,14 @@ func (b *BaseGUI) Update(units []dota2bot.Unit) {
 			green = 255
 		}
 		if radius > 0 {
-			unitUpdates = append(unitUpdates, &Update{
-				point,
-				radius,
-				red,
-				green,
-				blue,
+			unitUpdates = append(unitUpdates, &UnitUpdate{
+				Name:   unit.Name,
+				IsHero: unit.IsHero,
+				Point:  point,
+				Radius: radius,
+				Red:    red,
+				Green:  green,
+				Blue:   blue,
 			})
 		}
 	}
