@@ -28,7 +28,8 @@ func NewWebUI(gameInfo *dota2bot.GameInfo) *WebUI {
 		make(chan struct{}),
 		make(map[*websocket.Conn]struct{}),
 	}
-	mux.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("/home/guru/workspace/go/src/github.com/gurupras/dota2bot/gui/web/static/"))))
+	mux.Handle("/static/resources/", http.StripPrefix("/static/resources/", http.FileServer(http.Dir("../resources/"))))
+	mux.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("../gui/web/static/"))))
 	mux.HandleFunc("/ws", ui.ws)
 	mux.HandleFunc("/", ui.root)
 	return ui
@@ -36,7 +37,7 @@ func NewWebUI(gameInfo *dota2bot.GameInfo) *WebUI {
 
 func (w *WebUI) root(res http.ResponseWriter, req *http.Request) {
 	logrus.Infof("Entered serveHTTP")
-	http.ServeFile(res, req, "/home/guru/workspace/go/src/github.com/gurupras/dota2bot/gui/web/static/index.html")
+	http.ServeFile(res, req, "../gui/web/static/index.html")
 }
 
 func (w *WebUI) Update(units []dota2bot.Unit) {
